@@ -3,58 +3,70 @@ from tkinter import messagebox
 
 from data_analyser import create_eq_map
 
+class Interface_Menu():
 
-# Utworzenie głównego okna.
-master = tk.Tk()
-master.title('Map creation menu')
-master.geometry("480x300")
+    def __init__(self):
 
-period_group = tk.LabelFrame(master, text="\nSelect time period: \n")
-period_group.grid(row=1, column=1, ipadx=25)
+        # Utworzenie okna głównego.
+        self.master = tk.Tk()
+        self.master.title('Map creation menu')
+        self.master.geometry("480x300")
 
-magnitude_group = tk.LabelFrame(master, text="\nSelect magnitude: \n")
-magnitude_group.grid(row=1, column=2, ipadx=25)
+        # Słowniki potrzebne do utworzenia przycisków pojedynczego wyboru.
+        periods = {"Past day": "day",
+                   "Past 7 days": "week",
+                   "Past 30 days": "month",
+                   }
 
-# Zainicjowanie zmiennych do przechowywania danych z przycisków.
-period = tk.StringVar(master, None)
-magnitude = tk.StringVar(master, None)
+        magnitudes = {"Over 4.5": "4.5",
+                      "Over 2.5": "2.5",
+                      "Over 1.0": "1.0",
+                      }
 
-# Słownik potrzebny do utworzenia wielu przycisków.
-periods = {"Past day": "day",
-           "Past 7 days": "week",
-           "Past 30 days": "month",
-           }
+        # Utworzenie dwóch grup przycisków pojedynczego wyboru.
+        period_group = self.create_group("Select time period: ")
+        period_group.grid(row=1, column=1)
+        self.period_var = tk.StringVar(self.master, None)
+        self.create_radiobuttons(periods, period_group, self.period_var)
 
-magnitudes = {"Over 4.5": "4.5",
-              "Over 2.5": "2.5",
-              "Over 1.0": "1.0",
-              }
+        magnitude_group = self.create_group("Select magnitude: ")
+        magnitude_group.grid(row=1, column=2)
+        self.magnitude_var = tk.StringVar(self.master, None)
+        self.create_radiobuttons(magnitudes, magnitude_group, self.magnitude_var)
+
+        # Wyświetlenie notki informacyjnej i przycisku generującego mapę.
+        note_text = '(Note that the greater data range you choose,\n the longer it will take to generate map.)'
+        note = tk.Label(self.master, width=20, font=('bold', 9), text=note_text)
+        note.grid(row=2, column=1, ipadx=60)
+
+        button = tk.Button(self.master, text="Create map", command=self.push_button,
+                           background="crimson", font=('bold', 14), bd=5)
+        button.grid(row=2, column=2, pady=15, ipady=10, ipadx=35, sticky='e')
+
+        # Pętla obsługująca działanie progamu w oknie.
+        tk.mainloop()
+
+    def create_group(self, title):
+        # Utworzenie ramki wewnątrz okna.
+        group = tk.LabelFrame(self.master, font=7, text=title)
+        group.grid(row=1, ipadx=25, pady=20)
+        return group
+
+    def create_radiobuttons(self, dict, group, var):
+        # Pętla do utworzenia listy jednokrotnego wyboru.
+        for (text, value) in dict.items():
+            tk.Radiobutton(group, text=text, variable=var,
+                           value=value, indicator=0,
+                           background="light blue").pack(side='top', fill='both', ipady=10)
+
+    def push_button(self):
+        # Funkcja sprawdzająca czy dostarczono niezbędne dane.
+        if self.period_var.get() == "" or self.magnitude_var.get() == "":
+            messagebox.showinfo("Error", "You have to select time period ang magnitude!")
+        else:
+            return create_eq_map(self.magnitude_var.get(), self.period_var.get())
 
 
-def push_button():
-    if magnitude.get() == "" or period.get() == "":
-        messagebox.showinfo("Error", "You have to select time period ang magnitude!")
-    else:
-        return create_eq_map(magnitude.get(), period.get())
-
-
-# Pętla do utworzenia obu list jednokrotnego wyboru.
-for (text, value) in periods.items():
-    tk.Radiobutton(period_group, text=text, variable=period,
-                   value=value, indicator=0,
-                   background="light blue").pack(side='top', fill='both', ipady=10)
-
-for (text, value) in magnitudes.items():
-    tk.Radiobutton(magnitude_group, text=text, variable=magnitude,
-                   value=value, indicator=0,
-                   background="light blue").pack(side='top', fill='both', ipady=10)
-
-note = tk.Label(master, width=20, font = ('bold', 9), text='(Note that the greater data range you choose,\n'
-                                       ' the longer it will take to generate map.)')
-button = tk.Button(master, text="Create map", command=push_button, background="crimson", font=('bold',14), bd=5)
-
-note.grid(row=2, column=1, ipadx=60)
-button.grid(row=2, column=2, pady=35, ipady=10, ipadx=35, sticky='e')
-
-# Pętla obsługująca działanie progamu w oknie.
-tk.mainloop()
+if __name__ == '__main__':
+    # Utworzenie i uruchomienie aplikacji.
+    map = Interface_Menu()
