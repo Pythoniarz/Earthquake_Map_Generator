@@ -34,7 +34,8 @@ def create_eq_map(eq_mag, eq_time_past):
         title = eq_dict['properties']['title']
         time = eq_dict['properties']['time'] / 1000
         formatted_time = datetime.datetime.fromtimestamp(time).strftime('%d-%m-%Y %H:%M:%S')
-        hover_text = title + "<br>" + formatted_time
+        line = "<br>" + len(title)//2 * " - " + "<br>"
+        hover_text = title + line + formatted_time
         mags.append(mag)
         lons.append(lon)
         lats.append(lat)
