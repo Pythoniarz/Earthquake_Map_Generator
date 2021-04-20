@@ -10,7 +10,7 @@ class Interface_Menu():
         # Utworzenie okna głównego.
         self.master = tk.Tk()
         self.master.title('Map creation menu')
-        self.master.geometry("480x300")
+        self.master.geometry("515x300")
 
         # Słowniki potrzebne do utworzenia przycisków pojedynczego wyboru.
         periods = {"Past day": "day",
